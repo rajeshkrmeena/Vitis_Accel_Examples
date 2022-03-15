@@ -31,13 +31,13 @@ using std::vector;
 cl::Program load_cl2_binary(cl::Program::Binaries, cl::Device device, cl::Context context);
 // This example demonstrates how to split work among multiple devices.
 int main(int argc, char** argv) {
-    if (argc != 2) {
-        std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
+    if (argc != 3) {
+        std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << " <XCLBIN File>" << std::endl;  // for two different board or xclbin 
         return EXIT_FAILURE;
     }
 
     auto binaryFile = argv[1];
-
+    auto binaryFile2 = argv[2];
     cl_int err = CL_SUCCESS;
 
     // OPENCL HOST CODE AREA START
@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
 
         // read_binary_file() ia a utility API which will load the binaryFile
         // and will return pointer to file buffer.
-        fileBuf[d] = xcl::read_binary_file(binaryFile);
+        fileBuf[d] = ((d==0) ? xcl::read_binary_file(binaryFile) : xcl::read_binary_file(binaryFile2)) ; // Only for two different boards
         bins[d].push_back({fileBuf[d].data(), fileBuf[d].size()});
         programs[d] = load_cl2_binary(bins[d], devices[d], contexts[d]);
         OCL_CHECK(err, kernels[d] = cl::Kernel(programs[d], "vadd", &err));
