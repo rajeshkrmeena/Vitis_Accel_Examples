@@ -28,7 +28,7 @@ Once the environment has been configured, the application can be executed by
 
 ::
 
-   ./multiple_devices <vector_addition XCLBIN>
+   ./multiple_devices <vector_addition XCLBIN1> <vector_addition XCLBIN2>
 
 DETAILS
 -------
@@ -48,7 +48,7 @@ a kernel each is created for FPGAs on the system.
 
 .. code:: cpp
 
-   fileBuf[d] = xcl::read_binary_file(binaryFile, fileBufSize);
+   fileBuf[d] = ((d=0) ? xcl::read_binary_file(binaryFile, fileBufSize) : xcl::read_binary_file(binaryFile2, fileBufSize));
    bins[d].push_back({fileBuf[d], fileBufSize});
    programs[d] = load_cl2_binary(bins[d], devices[d], contexts[d]);
    kernels[d] = cl::Kernel(programs[d], "vadd", &err);
